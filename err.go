@@ -9,7 +9,7 @@ var (
 	NewPasswordNumberErr = func() *errs.Error {
 		return &errs.Error{
 			Key:     "VALIDATION_PASSWORD_NUMBER_ERR",
-			Message: "password must contain least one number",
+			Message: "password must contain least one Number",
 			Errors:  nil,
 			Status:  nil,
 		}
@@ -17,7 +17,7 @@ var (
 	NewPasswordLowerLetterErr = func() *errs.Error {
 		return &errs.Error{
 			Key:     "VALIDATION_LOWER_LETTER_ERR",
-			Message: "password must contain least one lower letter",
+			Message: "password must contain least one Lower letter",
 			Errors:  nil,
 			Status:  nil,
 		}
@@ -25,7 +25,7 @@ var (
 	NewPasswordUpperLetterErr = func() *errs.Error {
 		return &errs.Error{
 			Key:     "VALIDATION_UPPER_LETTER_ERR",
-			Message: "password must contain least one upper letter",
+			Message: "password must contain least one Upper letter",
 			Errors:  nil,
 			Status:  nil,
 		}
@@ -33,7 +33,7 @@ var (
 	NewPasswordSpecialCharacterErr = func() *errs.Error {
 		return &errs.Error{
 			Key:     "VALIDATION_SPECIAL_CHARACTER_ERR",
-			Message: "password must contain least one special character",
+			Message: "password must contain least one Special character",
 			Errors:  nil,
 			Status:  nil,
 		}

@@ -6,11 +6,11 @@ import (
 )
 
 type PasswordValidate struct {
-	number  bool
-	upper   bool
-	lower   bool
-	special bool
-	letters *int16
+	Number  bool
+	Upper   bool
+	Lower   bool
+	Special bool
+	Letters *int16
 }
 
 func IsStrongPassword(s string, options PasswordValidate) *errs.Error {
@@ -18,42 +18,42 @@ func IsStrongPassword(s string, options PasswordValidate) *errs.Error {
 	for _, c := range s {
 		switch {
 		case unicode.IsNumber(c):
-			password.number = true
-			*password.letters++
+			password.Number = true
+			*password.Letters++
 		case unicode.IsUpper(c):
-			password.upper = true
-			*password.letters++
+			password.Upper = true
+			*password.Letters++
 		case unicode.IsLower(c):
-			password.lower = true
-			*password.letters++
+			password.Lower = true
+			*password.Letters++
 		case unicode.IsPunct(c) || unicode.IsSymbol(c):
-			password.special = true
-			*password.letters++
+			password.Special = true
+			*password.Letters++
 		default:
-			*password.letters++
+			*password.Letters++
 		}
 	}
 
 	var validationErr []errs.Error
 
-	if options.number && !password.number {
+	if options.Number && !password.Number {
 		validationErr = append(validationErr, *NewPasswordNumberErr())
 	}
 
-	if options.lower && !password.lower {
+	if options.Lower && !password.Lower {
 		validationErr = append(validationErr, *NewPasswordLowerLetterErr())
 	}
 
-	if options.upper && !password.upper {
+	if options.Upper && !password.Upper {
 		validationErr = append(validationErr, *NewPasswordNumberErr())
 	}
 
-	if options.special && !password.special {
+	if options.Special && !password.Special {
 		validationErr = append(validationErr, *NewPasswordSpecialCharacterErr())
 	}
 
-	if options.letters != nil && *options.letters <= *password.letters {
-		validationErr = append(validationErr, *NewPasswordCharacterLengthErr(*options.letters))
+	if options.Letters != nil && *options.Letters <= *password.Letters {
+		validationErr = append(validationErr, *NewPasswordCharacterLengthErr(*options.Letters))
 	}
 
 	if len(validationErr) > 0 {
