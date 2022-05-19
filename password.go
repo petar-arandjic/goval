@@ -14,7 +14,14 @@ type PasswordValidate struct {
 }
 
 func IsStrongPassword(s string, options PasswordValidate) *errs.Error {
-	var password PasswordValidate
+	var letters int16 = 0
+	password := PasswordValidate{
+		Number:  false,
+		Upper:   false,
+		Lower:   false,
+		Special: false,
+		Letters: &letters,
+	}
 	for _, c := range s {
 		switch {
 		case unicode.IsNumber(c):
@@ -52,7 +59,7 @@ func IsStrongPassword(s string, options PasswordValidate) *errs.Error {
 		validationErr = append(validationErr, *NewPasswordSpecialCharacterErr())
 	}
 
-	if options.Letters != nil && *options.Letters <= *password.Letters {
+	if options.Letters != nil && *options.Letters > *password.Letters {
 		validationErr = append(validationErr, *NewPasswordCharacterLengthErr(*options.Letters))
 	}
 
