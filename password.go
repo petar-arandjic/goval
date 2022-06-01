@@ -1,6 +1,7 @@
 package validator
 
 import (
+	"fmt"
 	errs "github.com/petar-arandjic/goerr"
 	"unicode"
 )
@@ -13,8 +14,9 @@ type PasswordValidate struct {
 	Letters *int16
 }
 
-func IsStrongPassword(s string, options PasswordValidate) *errs.Error {
+func IsStrongPassword(s string, options PasswordValidate) *errs.SubError {
 	var letters int16 = 0
+
 	password := PasswordValidate{
 		Number:  false,
 		Upper:   false,
@@ -22,6 +24,8 @@ func IsStrongPassword(s string, options PasswordValidate) *errs.Error {
 		Special: false,
 		Letters: &letters,
 	}
+
+	// check what password contains
 	for _, c := range s {
 		switch {
 		case unicode.IsNumber(c):
@@ -41,36 +45,39 @@ func IsStrongPassword(s string, options PasswordValidate) *errs.Error {
 		}
 	}
 
-	var validationErr []errs.Error
+	err := errs.SubError{
+		Key:     "STRONG_PASSWORD_VALIDATION_FAILED",
+		Message: "password must contain | ",
+	}
+	isValid := true
 
 	if options.Number && !password.Number {
-		validationErr = append(validationErr, *NewPasswordNumberErr())
+		err.Message = fmt.Sprintf("%s number | ", err.Message)
+		isValid = false
 	}
 
 	if options.Lower && !password.Lower {
-		validationErr = append(validationErr, *NewPasswordLowerLetterErr())
+		err.Message = fmt.Sprintf("%s lower letter | ", err.Message)
+		isValid = false
 	}
 
 	if options.Upper && !password.Upper {
-		validationErr = append(validationErr, *NewPasswordNumberErr())
+		err.Message = fmt.Sprintf("%s uppder letter | ", err.Message)
+		isValid = false
 	}
 
 	if options.Special && !password.Special {
-		validationErr = append(validationErr, *NewPasswordSpecialCharacterErr())
+		err.Message = fmt.Sprintf("%s special character | ", err.Message)
+		isValid = false
 	}
 
 	if options.Letters != nil && *options.Letters > *password.Letters {
-		validationErr = append(validationErr, *NewPasswordCharacterLengthErr(*options.Letters))
+		err.Message = fmt.Sprintf("%s %v characters long | ", err.Message, *options.Letters)
+		isValid = false
 	}
 
-	if len(validationErr) > 0 {
-		var status int16 = 404
-		return errs.NewCustom(
-			"PASSWORD_VALIDATION_ERR",
-			"password validation failed",
-			&validationErr,
-			&status,
-		)
+	if !isValid {
+		return &err
 	}
 
 	return nil
